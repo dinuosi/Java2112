@@ -10,7 +10,11 @@ package exception;
 public class ThrowDemo {
     public static void main(String[] args) {
         Person p = new Person();
-        p.setAge(100000);//满足语法不满足业务需求。
+        try {
+            p.setAge(100000);//满足语法不满足业务需求。
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         System.out.println(p.getAge());
     }
 }
