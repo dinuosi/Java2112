@@ -14,9 +14,19 @@ package exception;
 public class TryCatchDemo {
     public static void main(String[] args) {
         System.out.println("程序开始了");
+        try {
+            String str = "a";
+            System.out.println(str.length());
+            System.out.println(str.charAt(0));
+        }catch (NullPointerException|StringIndexOutOfBoundsException e){
+            System.out.println("出现空指针或下标越界异常，并在这里得到解决");
+        }
 
-        String str = null;
-        System.out.println(str.length());
+//        catch (NullPointerException e){
+//            System.out.println("出现空指针异常，并在这里解决");
+//        }catch (StringIndexOutOfBoundsException e){
+//            System.out.println("出现字符串下标越界异常，并在这里得到解决");
+//        }
 
         System.out.println("程序结束了");
     }
