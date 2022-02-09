@@ -47,23 +47,33 @@ public class Client {
     public void start(){
         try {
             /*
-                通过Socket的方法：
+                通过Socket的方法:
                 OutputStream getOutputStream()
-                获取字节输出流写出的字节会通过网络发送给远端建立好链接的计算机
+                获取的字节输出流写出的字节会通过网络发送给远端建立好链接的计算机。
              */
             OutputStream out = socket.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(out, StandardCharsets.UTF_8);
             BufferedWriter bw = new BufferedWriter(osw);
-            PrintWriter pw = new PrintWriter(bw,true);//自动flush
+            PrintWriter pw = new PrintWriter(bw,true);
 
-            pw.println("你好，服务端");
+            pw.println("你好！服务端!");
+
         } catch (IOException e) {
             e.printStackTrace();
         }
+
     }
 
     public static void main(String[] args) {
         Client client = new Client();
         client.start();
     }
+
+
 }
+
+
+
+
+
+

@@ -64,7 +64,7 @@ public class Server {
             BufferedReader br = new BufferedReader(isr);
 
             String line = br.readLine();
-            System.out.println("客户端说"+line);
+            System.out.println("客户端说:"+line);
 
         } catch (IOException e) {
             e.printStackTrace();
