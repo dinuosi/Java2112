@@ -1,7 +1,8 @@
 package socket;
 
-import java.io.IOException;
+import java.io.*;
 import java.net.Socket;
+import java.nio.charset.StandardCharsets;
 
 /**
  * 聊天室客户端
@@ -44,19 +45,25 @@ public class Client {
      * 客户端开始工作的方法
      */
     public void start(){
+        try {
+            /*
+                通过Socket的方法：
+                OutputStream getOutputStream()
+                获取字节输出流写出的字节会通过网络发送给远端建立好链接的计算机
+             */
+            OutputStream out = socket.getOutputStream();
+            OutputStreamWriter osw = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+            BufferedWriter bw = new BufferedWriter(osw);
+            PrintWriter pw = new PrintWriter(bw,true);//自动flush
 
+            pw.println("你好，服务端");
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     public static void main(String[] args) {
         Client client = new Client();
         client.start();
     }
-
-
 }
-
-
-
-
-
-
