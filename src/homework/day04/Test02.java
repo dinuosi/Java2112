@@ -1,23 +1,46 @@
 package homework.day04;
 
 import java.io.File;
-import java.io.FileNotFoundException;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.RandomAccessFile;
 
 /**
  * 将当前目录下的所有文件都复制一份，复制的文件命名为:原
  * 文件名_cp.后缀
  * 比如原文件为:test.dat
  * 复制后的文件为:test_cp.dat
- * 
- * 
+ *
+ *
  * @author Xiloer
  *
  */
 public class Test02 {
 	public static void main(String[] args) throws IOException {
-		
+		File dir = new File(".");
+		if(dir.isDirectory()){
+			File[] subs = dir.listFiles(file->file.isFile());
+			for(int i=0;i<subs.length;i++){
+				File file = subs[i];
+				String fileName = file.getName();//原文件的名字
+				//名字部分 test
+				String name1 = fileName.substring(0,fileName.lastIndexOf("."));
+				//后缀部分 dat
+				String name2 = fileName.substring(fileName.lastIndexOf(".")+1);
+				//复制的文件的名字
+				String newFileName =name1+"_cp."+name2;
+				FileInputStream fis = new FileInputStream(file);
+				FileOutputStream fos = new FileOutputStream(newFileName);
+				byte[] data = new byte[1024*10];
+				int len;
+				while((len = fis.read(data))!=-1){
+					fos.write(data,0,len);
+				}
+				fis.close();
+				fos.close();
+			}
+		}
+		System.out.println("全部复制完毕!");
 	}
 }
 

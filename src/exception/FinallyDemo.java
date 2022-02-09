@@ -12,19 +12,21 @@ package exception;
 public class FinallyDemo {
     public static void main(String[] args) {
         System.out.println("程序开始了");
-
-
         try {
-            String str = "null" ;
+            String str = null;
             System.out.println(str.length());
             return;//方法实际返回前也要先执行完finally
-        } catch (Exception e) {
-            System.out.println("出错了");;
-        } finally {
-            System.out.println("finally中的代码执行了");
+        }catch(Exception e){
+            System.out.println("出错了!");
+        }finally {
+            System.out.println("finally中的代码执行了!");
         }
-
-
-        System.out.println("程序开始了");
+        System.out.println("程序结束了");
     }
 }
+
+
+
+
+
+
