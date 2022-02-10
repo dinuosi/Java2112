@@ -13,6 +13,7 @@ public class AutoCloseableDemo {
                 /*
                     只有实现了AutoCloseable接口的类才可以在这里定义并初始化。
                     并且编译器在编译时会将在这里定义的变量在finally中调用close将其关闭。
+                    多了个小括号，编译的时候小括号也会消失
                     最终编译器会将当前代码改为FinallyDemo2的样子。
                  */
                 FileOutputStream fos = new FileOutputStream("fos.dat");

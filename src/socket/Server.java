@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
 
 /**
@@ -51,21 +52,26 @@ public class Server {
                 该方法是一个阻塞方法，调用后开始等待，直到一个客户端与服务端建立链接
                 为止，此时该方法会立即返回一个Socket，通过这个Socket与该客户端交互
              */
-            System.out.println("等待客户端链接...");
-            Socket socket = server.accept();
-            System.out.println("一个客户端链接了!");
+            while (true) {
+                System.out.println("等待客户端链接...");
+                Socket socket = server.accept();
+                System.out.println("一个客户端链接了!");
+            }
             /*
                 通过Socket的方法:
                 InputStream getInputStream()
                 获取一个字节输入流，可以读取来自远端计算机发送过来的字节数据
              */
-            InputStream in = socket.getInputStream();
+/*            InputStream in = socket.getInputStream();
             InputStreamReader isr = new InputStreamReader(in, StandardCharsets.UTF_8);
             BufferedReader br = new BufferedReader(isr);
 
-            String line = br.readLine();
-            System.out.println("客户端说:"+line);
-
+            String line ;
+            while((line = br.readLine())!=null){
+                System.out.println("客户端说:" + line);
+            }*/
+//        } catch (SocketException e){
+//            System.out.println("异常断开");
         } catch (IOException e) {
             e.printStackTrace();
         }

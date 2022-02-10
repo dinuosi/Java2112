@@ -3,6 +3,7 @@ package socket;
 import java.io.*;
 import java.net.Socket;
 import java.nio.charset.StandardCharsets;
+import java.util.Scanner;
 
 /**
  * 聊天室客户端
@@ -18,7 +19,7 @@ public class Client {
     /**
      * 初始化客户端
      */
-    public Client(){
+    public Client() {
         try {
             /*
                 实例化Socket时需要传入两个参数:
@@ -35,16 +36,17 @@ public class Client {
                 127.0.0.1
              */
             System.out.println("正在链接服务端...");
-            socket = new Socket("localhost",8088);
+            socket = new Socket("localhost", 8088);
             System.out.println("与服务端建立链接!");
         } catch (IOException e) {
             e.printStackTrace();
         }
     }
+
     /**
      * 客户端开始工作的方法
      */
-    public void start(){
+    public void start() {
         try {
             /*
                 通过Socket的方法:
@@ -54,12 +56,25 @@ public class Client {
             OutputStream out = socket.getOutputStream();
             OutputStreamWriter osw = new OutputStreamWriter(out, StandardCharsets.UTF_8);
             BufferedWriter bw = new BufferedWriter(osw);
-            PrintWriter pw = new PrintWriter(bw,true);
+            PrintWriter pw = new PrintWriter(bw, true);
 
-            pw.println("你好！服务端!");
+            Scanner scanner = new Scanner(System.in);
+            while (true) {
+                String line = scanner.nextLine();
+                if ("exit".equalsIgnoreCase(line)) {
+                    break;
+                }
+                pw.println(line);
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
+        } finally {
+            try {
+                socket.close();//与远端计算机断开连接，进行TCP挥手
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
 
     }
@@ -71,9 +86,3 @@ public class Client {
 
 
 }
-
-
-
-
-
-
