@@ -8,6 +8,7 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
+import java.util.logging.Handler;
 
 /**
  * 聊天室服务端
@@ -18,14 +19,13 @@ public class Server {
      * ServerSocket是运行在服务端的，它的主要工作:
      * 1:打开服务端口(客户端就是通过这个端口与服务端建立链接)
      * 2:监听该服务端口，一旦一个客户端链接，则会返回一个Socket实例，并通过这个
-     *   Socket实例与链接的客户端进行交互
-     *
+     * Socket实例与链接的客户端进行交互
+     * <p>
      * 如果我们将Socket比喻为"电话"，那么ServerSocket相当于是"总机"。
-     *
      */
     private ServerSocket server;
 
-    public Server(){
+    public Server() {
         try {
             /*
                 实例化ServerSocket的同时需要指定打开的服务端口，客户端就是通过该
@@ -44,7 +44,7 @@ public class Server {
 
     }
 
-    public void start(){
+    public void start() {
         try {
             /*
                 ServerSocket提供的方法:
@@ -56,22 +56,11 @@ public class Server {
                 System.out.println("等待客户端链接...");
                 Socket socket = server.accept();
                 System.out.println("一个客户端链接了!");
+                //启动一个线程来处理与客户端的交互
+                Runnable handler = new ClientHandler(socket);
+                Thread t = new Thread(handler);//启动一个线程
+                t.start();
             }
-            /*
-                通过Socket的方法:
-                InputStream getInputStream()
-                获取一个字节输入流，可以读取来自远端计算机发送过来的字节数据
-             */
-/*            InputStream in = socket.getInputStream();
-            InputStreamReader isr = new InputStreamReader(in, StandardCharsets.UTF_8);
-            BufferedReader br = new BufferedReader(isr);
-
-            String line ;
-            while((line = br.readLine())!=null){
-                System.out.println("客户端说:" + line);
-            }*/
-//        } catch (SocketException e){
-//            System.out.println("异常断开");
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -80,6 +69,34 @@ public class Server {
     public static void main(String[] args) {
         Server server = new Server();
         server.start();
+    }
+
+    private class ClientHandler implements Runnable {
+        private Socket socket;
+
+        public ClientHandler(Socket socket) {
+            this.socket = socket;
+        }
+
+        public void run() {
+            try {
+            /*
+                通过Socket的方法:
+                InputStream getInputStream()
+                获取一个字节输入流，可以读取来自远端计算机发送过来的字节数据
+             */
+                InputStream in = socket.getInputStream();
+                InputStreamReader isr = new InputStreamReader(in, StandardCharsets.UTF_8);
+                BufferedReader br = new BufferedReader(isr);
+
+                String line;
+                while ((line = br.readLine()) != null) {
+                    System.out.println("客户端说:" + line);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
 }
