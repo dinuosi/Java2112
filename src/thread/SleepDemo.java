@@ -1,5 +1,7 @@
 package thread;
 
+import java.util.Scanner;
+
 /**
  * 线程提供了一个静态方法:
  * static void sleep(long ms)
@@ -15,10 +17,15 @@ public class SleepDemo {
             倒计时程序
             程序启动后输入一个数字，从该数字开始每秒递减。到0时输出时间到!
          */
-        try {
-            Thread.sleep(5000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
+
+        Scanner scanner = new Scanner(System.in);
+        for (int num = scanner.nextInt();num>=0;num--){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+            System.out.println(num);
         }
         System.out.println("程序结束了!");
     }
