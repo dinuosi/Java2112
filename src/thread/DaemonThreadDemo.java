@@ -11,6 +11,38 @@ package thread;
  *
  */
 public class DaemonThreadDemo {
+    public static void main(String[] args) {
+        Thread rose = new Thread(){
+            public void run(){
+                for (int i = 0;i<5;i++){
+                    System.out.println("rose:let me go!");
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                    }
+                }
+                System.out.println("rose:aaaaaaaaaaaaaa!");
+                System.out.println("噗通！");
+            }
+        };
+
+        Thread jack = new Thread(){
+            public void run(){
+                while (true){
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                    }
+                    System.out.println("jack:you jump , I jump!");
+                }
+            }
+        };
+
+        rose.start();
+        jack.setDaemon(true);
+        jack.start();
+        while(true);//当主线程不会结束时，进程就不会结束(因为主线程也是普通线程)
+    }
 
 }
 
