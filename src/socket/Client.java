@@ -34,9 +34,13 @@ public class Client {
                 本机地址信息可以选取:
                 localhost
                 127.0.0.1
+                172.233.3.243
+
+                cyl
+                172.233.3.245
              */
             System.out.println("正在链接服务端...");
-            socket = new Socket("localhost", 8088);
+            socket = new Socket("172.233.3.243", 8088);
             System.out.println("与服务端建立链接!");
         } catch (IOException e) {
             e.printStackTrace();
@@ -48,6 +52,13 @@ public class Client {
      */
     public void start() {
         try {
+            //启动一个线程开读取服务端发送过来的消息
+            ServerHandler handler = new ServerHandler();
+            Thread t = new Thread(handler);
+            //将读取服务端消息设置为守护线程，这样以来，当我们停止给服务端发送消息(主线程结束，进程没有其他用户线程)那么守护线程就会被杀死
+            t.setDaemon(true);
+            t.start();
+
             /*
                 通过Socket的方法:
                 OutputStream getOutputStream()
@@ -58,6 +69,7 @@ public class Client {
             BufferedWriter bw = new BufferedWriter(osw);
             PrintWriter pw = new PrintWriter(bw, true);
 
+
             Scanner scanner = new Scanner(System.in);
             while (true) {
                 String line = scanner.nextLine();
@@ -65,6 +77,7 @@ public class Client {
                     break;
                 }
                 pw.println(line);
+
             }
 
         } catch (IOException e) {
@@ -84,5 +97,27 @@ public class Client {
         client.start();
     }
 
+    private class ServerHandler implements Runnable{
+        @Override
+        public void run() {//线程的run方法不允许使用throws声明异常的抛出
+            //通过socket获取输入流读取服务端发送过来的消息
+            try {
+
+            InputStream in =socket.getInputStream();
+            InputStreamReader isr = new InputStreamReader(in);
+            BufferedReader br = new BufferedReader(isr);
+            String line;
+            while ((line=br.readLine())!=null){
+                System.out.println(line);
+            }
+            }catch (Exception e){
+                /*
+                    这里不输出错误信息了。当远端计算机异常断开时会出现与异常，可以不输出错误信息
+
+                */
+
+            }
+        }
+    }
 
 }

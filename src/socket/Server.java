@@ -1,13 +1,11 @@
 package socket;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
+import java.util.Arrays;
 import java.util.logging.Handler;
 
 /**
@@ -24,6 +22,9 @@ public class Server {
      * 如果我们将Socket比喻为"电话"，那么ServerSocket相当于是"总机"。
      */
     private ServerSocket server;
+
+    //该数组用于存放所有客户端的输出流，用于广播消息给所有客户端
+    public PrintWriter[] allOut = {};
 
     public Server() {
         try {
@@ -82,6 +83,7 @@ public class Server {
         }
 
         public void run() {
+            PrintWriter pw = null;
             try {
             /*
                 通过Socket的方法:
@@ -92,6 +94,23 @@ public class Server {
                 InputStreamReader isr = new InputStreamReader(in, StandardCharsets.UTF_8);
                 BufferedReader br = new BufferedReader(isr);
 
+                //通过socket获取输出流，用于给客户端发送消息
+                OutputStream out = socket.getOutputStream();
+                OutputStreamWriter osw = new OutputStreamWriter(out, StandardCharsets.UTF_8);
+                BufferedWriter bw = new BufferedWriter(osw);
+                pw = new PrintWriter(bw, true);//加入自动行刷新
+                //将客户端的输出求存入共享数组allOut中
+
+
+                synchronized (Server.this) {
+
+                    //1.对allOut扩容
+                    allOut = Arrays.copyOf(allOut, allOut.length + 1);
+                    //2.将pw存入共享数组最后一个位置
+                    allOut[allOut.length - 1] = pw;
+                }
+                sendMessage(host + "来了奥，全体目光向我看齐，现在一共" + allOut.length + "个人");
+
                 String line;
                     /*
                         服务端在读取客户端消息这里，如果客户端没有调用socket.close()与服务端
@@ -101,9 +120,47 @@ public class Server {
                      */
                 while ((line = br.readLine()) != null) {
                     System.out.println(host + "说:" + line);
+                    //将消息回复给所有客户端
+                    sendMessage(host + "说：" + line);
+
+                    /*//将消息回复给客户端
+                    pw.println(host + "说：" + line);*/
                 }
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                synchronized (Server.this) {
+
+                    //当前客户端的输入流(pw)从allOut数组中删除
+                    for (int i = 0; i < allOut.length; i++) {
+                        if (allOut[i] == pw) {
+                            allOut[i] = allOut[allOut.length - 1];
+                            allOut = Arrays.copyOf(allOut, allOut.length - 1);
+                            break;
+                        }
+                    }
+                }
+
+                sendMessage(host + "溜了，全体目光再次向我看齐，现在一共" + allOut.length + "个人");
+
+                try {
+                    socket.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        /**
+         * 广播消息给所有客户端
+         * send：发送
+         * message：消息
+         */
+        private void sendMessage(String message) {
+            synchronized (Server.this){
+                for (int i = 0; i < allOut.length; i++) {
+                    allOut[i].println(message);
+                }
             }
         }
     }
