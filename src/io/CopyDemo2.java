@@ -14,8 +14,8 @@ import java.io.IOException;
  */
 public class CopyDemo2 {
     public static void main(String[] args) throws IOException {
-        FileInputStream fis = new FileInputStream("ppt.pptx");
-        FileOutputStream fos = new FileOutputStream("ppt_cp2.pptx");
+        FileInputStream fis = new FileInputStream("9.png");
+        FileOutputStream fos = new FileOutputStream("91.png");
         /*
             超类:java.io.InputStream中定义了块读取字节的方法:
             int read(byte[] data)
@@ -81,7 +81,7 @@ public class CopyDemo2 {
         long start = System.currentTimeMillis();
         while((len = fis.read(data))!=-1){
 //            fos.write(data);
-            fos.write(data,0,len);
+            fos.write(data,0,len);//(0,len)设置写入长度，防止最后一次超出写入垃圾数据
         }
         long end = System.currentTimeMillis();
         System.out.println("复制完毕!,耗时:"+(end-start)+"ms");

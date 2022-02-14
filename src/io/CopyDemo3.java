@@ -20,9 +20,9 @@ import java.io.*;
  */
 public class CopyDemo3 {
     public static void main(String[] args) throws IOException {
-        FileInputStream fis = new FileInputStream("ppt.pptx");
+        FileInputStream fis = new FileInputStream("9.png");
         BufferedInputStream bis = new BufferedInputStream(fis);
-        FileOutputStream fos = new FileOutputStream("ppt_cp.pptx");
+        FileOutputStream fos = new FileOutputStream("91.png");
         BufferedOutputStream bos = new BufferedOutputStream(fos);
         int d;
         long start = System.currentTimeMillis();
