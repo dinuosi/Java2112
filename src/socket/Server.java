@@ -3,10 +3,10 @@ package socket;
 import java.io.*;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.net.SocketException;
 import java.nio.charset.StandardCharsets;
-import java.util.Arrays;
-import java.util.logging.Handler;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Iterator;
 
 /**
  * 聊天室服务端
@@ -24,7 +24,8 @@ public class Server {
     private ServerSocket server;
 
     //该数组用于存放所有客户端的输出流，用于广播消息给所有客户端
-    public PrintWriter[] allOut = {};
+    //public PrintWriter[] allOut = {};
+    private Collection<PrintWriter> allOut = new ArrayList<>();
 
     public Server() {
         try {
@@ -104,12 +105,14 @@ public class Server {
 
                 synchronized (Server.this) {
 
-                    //1.对allOut扩容
+                    /*//1.对allOut扩容
                     allOut = Arrays.copyOf(allOut, allOut.length + 1);
                     //2.将pw存入共享数组最后一个位置
-                    allOut[allOut.length - 1] = pw;
+                    allOut[allOut.length - 1] = pw;*/
+
+                    allOut.add(pw);
                 }
-                sendMessage(host + "来了奥，全体目光向我看齐，现在一共" + allOut.length + "个人");
+                sendMessage(host + "来了奥，全体目光向我看齐，现在一共" + allOut.size() + "个人");
 
                 String line;
                     /*
@@ -132,16 +135,22 @@ public class Server {
                 synchronized (Server.this) {
 
                     //当前客户端的输入流(pw)从allOut数组中删除
-                    for (int i = 0; i < allOut.length; i++) {
+                    /*for (int i = 0; i < allOut.length; i++) {
                         if (allOut[i] == pw) {
                             allOut[i] = allOut[allOut.length - 1];
                             allOut = Arrays.copyOf(allOut, allOut.length - 1);
                             break;
                         }
-                    }
+                    }*/
+/*                    Collection pww = new ArrayList();
+                    pww.add(pw);
+                    allOut.removeAll(pww);*/
+
+                    allOut.remove(pw);
+
                 }
 
-                sendMessage(host + "溜了，全体目光再次向我看齐，现在一共" + allOut.length + "个人");
+                sendMessage(host + "溜了，全体目光再次向我看齐，现在一共" + allOut.size() + "个人");
 
                 try {
                     socket.close();
@@ -158,8 +167,11 @@ public class Server {
          */
         private void sendMessage(String message) {
             synchronized (Server.this){
-                for (int i = 0; i < allOut.length; i++) {
+                /*for (int i = 0; i < allOut.length; i++) {
                     allOut[i].println(message);
+                }*/
+                for (PrintWriter pw:allOut){
+                    pw.println(message);
                 }
             }
         }
